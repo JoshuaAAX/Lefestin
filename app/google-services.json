@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "156785382149",
+    "project_id": "lefestin-3b672",
+    "storage_bucket": "lefestin-3b672.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156785382149:android:fe47b94b8000f7578a9d6c",
+        "android_client_info": {
+          "package_name": "com.drop.lefestin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZQWLQ18PkDtkgbZFMuE7cs3kCWL7R76I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
