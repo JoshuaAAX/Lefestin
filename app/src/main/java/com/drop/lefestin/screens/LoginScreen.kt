@@ -31,9 +31,11 @@ import com.drop.lefestin.R
 import com.drop.lefestin.ViewModels.LoginViewModel
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.navigation.NavController
+
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel){
+fun LoginScreen(viewModel: LoginViewModel, navController: NavController){
 
     Box(
         Modifier
@@ -41,12 +43,12 @@ fun LoginScreen(viewModel: LoginViewModel){
             .background(Color(0xFFCF0304))
             .padding(16.dp)
     ){
-        Login(Modifier.align(Alignment.Center), viewModel)
+        Login(Modifier.align(Alignment.Center), viewModel,  navController)
     }
 }
 
 @Composable
-fun Login(modifier: Modifier, viewModel: LoginViewModel) {
+fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavController) {
 
     val email :String by viewModel.email.observeAsState(initial = "")
     val password :String by viewModel.password.observeAsState(initial = "")
@@ -60,7 +62,7 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
         Spacer(modifier = Modifier.padding(4.dp))
         PasswordField(password){viewModel.onLoginChanged(email, it)}
         Spacer(modifier = Modifier.padding(8.dp))
-        NoAccount(Modifier.align(Alignment.End))
+        NoAccount(Modifier.align(Alignment.End), navController)
         Spacer(modifier = Modifier.padding(16.dp))
         LoginButton(loginEnable) {viewModel.onLoginSelected()}
     }
@@ -95,9 +97,9 @@ fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
 }
 
 @Composable
-fun NoAccount(modifier: Modifier) {
+fun NoAccount(modifier: Modifier, navController: NavController) {
     Text(text = "No tienes una cuenta?",
-        modifier = modifier.clickable { },
+        modifier = modifier.clickable { navController.navigate("register") },
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         color = Color(0xFFFFFFFF)
@@ -156,7 +158,7 @@ fun HeaderImage(modifier:Modifier) {
 @Preview
 @Composable
 fun DefaultPreviewOfLoginScreen(){
-    LoginScreen(LoginViewModel())
+   // LoginScreen(LoginViewModel(),  navController)
 
 }
 

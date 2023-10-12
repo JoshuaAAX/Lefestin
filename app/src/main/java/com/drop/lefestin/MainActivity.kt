@@ -4,17 +4,21 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.ExperimentalMaterial3Api
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.drop.lefestin.ViewModels.LoginViewModel
+import com.drop.lefestin.ViewModels.SignUpViewModel
 import com.drop.lefestin.screens.AddScreen
 import com.drop.lefestin.screens.FavoriteScreen
 import com.drop.lefestin.screens.HomeScreen
+import com.drop.lefestin.screens.LoginScreen
 import com.drop.lefestin.screens.ProfileScreen
+import com.drop.lefestin.screens.SignUpScreen
 import com.drop.lefestin.ui.theme.LefestinTheme
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -28,14 +32,25 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getData()
         setContent {
             LefestinApp {
+
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "home"){
+                //val navigateToRegister = {navController.navigate("register")}
+                NavHost(navController = navController, startDestination = "login"){
+
+                    composable("login"){
+                        LoginScreen(LoginViewModel(),navController)
+                    }
+
+                    composable("register"){
+                        SignUpScreen(SignUpViewModel(),navController)
+                    }
+
                     composable("home"){
                         HomeScreen(navController)
                     }
@@ -89,8 +104,8 @@ class MainActivity : ComponentActivity() {
 
     private fun getClient(): SupabaseClient {
         return createSupabaseClient(
-            supabaseUrl = "aqui va la url",
-            supabaseKey = "secreto"
+            supabaseUrl = "https://ndefbaxquzwcbjcepffc.supabase.co",
+            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kZWZiYXhxdXp3Y2JqY2VwZmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY5NzE2NDIsImV4cCI6MjAxMjU0NzY0Mn0.jtPRy4cMMpkbuZpBwiQhlTQpBsVl611Xm72ygtZkyCY"
         ) {
             install(Postgrest)
             install(GoTrue)

@@ -29,11 +29,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.drop.lefestin.R
 import com.drop.lefestin.ViewModels.SignUpViewModel
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel){
+fun SignUpScreen(viewModel: SignUpViewModel,navController: NavController){
 
     Box(
         Modifier
@@ -41,12 +42,12 @@ fun SignUpScreen(viewModel: SignUpViewModel){
             .background(Color(0xFFCF0304))
             .padding(16.dp)
     ){
-        Login(Modifier.align(Alignment.Center), viewModel)
+        Login(Modifier.align(Alignment.Center), viewModel,navController)
     }
 }
 
 @Composable
-fun Login(modifier: Modifier, viewModel: SignUpViewModel) {
+fun Login(modifier: Modifier, viewModel: SignUpViewModel,navController: NavController) {
 
     val user :String by viewModel.user.observeAsState(initial = "")
     val email :String by viewModel.email.observeAsState(initial = "")
@@ -64,7 +65,7 @@ fun Login(modifier: Modifier, viewModel: SignUpViewModel) {
         Spacer(modifier = Modifier.padding(4.dp))
         PasswordFieldRegister(password){viewModel.onSignUpChanged(user,email, it)}
         Spacer(modifier = Modifier.padding(8.dp))
-        HaveAnAccount(Modifier.align(Alignment.End))
+        HaveAnAccount(Modifier.align(Alignment.End), navController)
         Spacer(modifier = Modifier.padding(16.dp))
         SignUpButton(signUpEnable) {viewModel.onSignUpSelected()}
     }
@@ -119,9 +120,9 @@ fun SignUpButton(signUpEnable: Boolean, onSignUpSelected: () -> Unit) {
 }
 
 @Composable
-fun HaveAnAccount(modifier: Modifier) {
+fun HaveAnAccount(modifier: Modifier,navController: NavController) {
     Text(text = "Ya tienes una cuenta?",
-        modifier = modifier.clickable { },
+        modifier = modifier.clickable { navController.navigate("login")},
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         color = Color(0xFFFFFFFF)
@@ -180,6 +181,6 @@ fun HeaderImageSignUp(modifier: Modifier) {
 @Preview
 @Composable
 fun DefaultPreviewOfSignUpScreen(){
-    SignUpScreen(SignUpViewModel())
+    //SignUpScreen(SignUpViewModel(),navController)
 
 }
