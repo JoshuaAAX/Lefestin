@@ -64,7 +64,7 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavContr
         Spacer(modifier = Modifier.padding(8.dp))
         NoAccount(Modifier.align(Alignment.End), navController)
         Spacer(modifier = Modifier.padding(16.dp))
-        LoginButton(loginEnable) {viewModel.onLoginSelected()}
+        LoginButton(loginEnable, onLoginSelected = { /*TODO*/ }, navController = navController)
     }
 }
 
@@ -79,9 +79,10 @@ fun MainTextLogin(modifier: Modifier) {
 }
 
 @Composable
-fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
+fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit, navController: NavController) {
     Button(
-        onClick = {onLoginSelected() },
+        // onClick = {onLoginSelected() }, logica real
+        onClick = { navController.navigate("home") },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
