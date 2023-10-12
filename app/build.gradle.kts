@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    kotlin("plugin.serialization") version "1.8.10"
 }
 
 android {
@@ -16,6 +17,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -63,6 +66,10 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:1.4.0")
+    implementation("io.ktor:ktor-client-cio:2.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

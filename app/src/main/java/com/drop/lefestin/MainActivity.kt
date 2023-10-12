@@ -1,118 +1,118 @@
 package com.drop.lefestin
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.drop.lefestin.screens.AddScreen
+import com.drop.lefestin.screens.FavoriteScreen
+import com.drop.lefestin.screens.HomeScreen
+import com.drop.lefestin.screens.ProfileScreen
 import com.drop.lefestin.ui.theme.LefestinTheme
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.GoTrue
+import io.github.jan.supabase.gotrue.gotrue
+import io.github.jan.supabase.gotrue.providers.builtin.Email
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getData()
         setContent {
+            LefestinApp {
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "home"){
+                    composable("home"){
+                        HomeScreen(navController)
+                    }
 
-            val navController = rememberNavController()
-            LefestinTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BottomAppBarWithIcons()
+                    composable("add"){
+                        AddScreen(navController)
+                    }
 
+                    composable("favorite"){
+                        FavoriteScreen(navController)
+                    }
+
+                    composable("profile"){
+                        ProfileScreen(navController)
+                    }
                 }
+
             }
         }
     }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BottomAppBarWithIcons() {
-    Scaffold(
-        bottomBar = {
-            BottomAppBar(
-            ) {
-                IconButton(
-                    onClick = { /* Handle icon 1 click */ },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Icon",
-                    )
+
+    private fun loginUser(email: String, password: String) {
+        lifecycleScope.launch {
+            try {
+                val client = getClient()
+                val response = client.gotrue.loginWith(Email) {
+                    this.email = email
+                    this.password = password
                 }
-                IconButton(
-                    onClick = { /* Handle icon 2 click */ },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Check Icon"
-                    )
-                }
-                IconButton(
-                    onClick = { /* Handle icon 3 click */ },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Icon"
-                    )
-                }
-                IconButton(
-                    onClick = { /* Handle icon 4 click */ },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Custom Icon"
-                    )
-                }
+                Log.i("response user", "funciono")
+
+
+            } catch (e: Exception) {
+                Log.e("Login Error", "Unknown error occurred")
             }
-        },
-        content = { innerPadding ->
-            Text(
-                modifier = Modifier.padding(innerPadding),
-                text = "Example of a scaffold with a bottom app bar and four icons."
-            )
         }
-    )
+    }
+
+    private fun getData() {
+        lifecycleScope.launch {
+
+            val client = getClient()
+            val supabaseResponse = client.postgrest["recipe"].select().decodeList<Repice>()
+
+            // Accede al primer elemento si la lista no está vacía
+            Log.i("supabase->response", supabaseResponse.toString())
+
+        }
+    }
+
+    private fun getClient(): SupabaseClient {
+        return createSupabaseClient(
+            supabaseUrl = "aqui va la url",
+            supabaseKey = "secreto"
+        ) {
+            install(Postgrest)
+            install(GoTrue)
+        }
+    }
+
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+
+@Serializable
+data class Repice(
+    @SerialName("id_recipe")
+    val id: Int,
+    @SerialName("name_recipe")
+    val name_recipe: String,
+)
+
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     LefestinTheme {
-        Greeting("Android")
+
     }
 }
