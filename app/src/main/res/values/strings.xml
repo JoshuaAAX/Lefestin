@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Lefestin</string>
+    <string name="profile_screen">Profile Screen</string>
+    <string name="header">Header</string>
+    <string name="email">Email</string>
+    <string name="home_screen">Home Screen</string>
 </resources>

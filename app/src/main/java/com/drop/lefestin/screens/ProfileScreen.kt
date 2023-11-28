@@ -14,8 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.drop.lefestin.R
 import com.drop.lefestin.components.MainAppBar
 
 @Composable
@@ -30,7 +32,7 @@ fun ProfileScreen(navController: NavController) {
         ) {
             Text(
                 modifier = Modifier.padding(16.dp),
-                text = "Profile Screen"
+                text = stringResource(R.string.profile_screen)
 
             )
 

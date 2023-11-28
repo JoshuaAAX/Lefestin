@@ -1,9 +1,15 @@
 package com.drop.lefestin.ViewModels
 
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.drop.lefestin.SupabaseHelper
+import com.drop.lefestin.SupabaseHelper.getData
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel(){
 
@@ -18,14 +24,20 @@ class LoginViewModel : ViewModel(){
 
 
 
+
     fun onLoginChanged(email: String, password: String){
         _email.value = email
         _password.value = password
         _loginEnable.value = isValidEmail(email) && isValidPassword(password)
     }
+
     private fun isValidEmail(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     private fun isValidPassword(password: String): Boolean = password.length > 6
-    fun onLoginSelected(){
+    suspend fun onLoginSelected(){
+        viewModelScope.launch {
+            SupabaseHelper.loginUser(_email.value.toString(),_password.value.toString())
+            SupabaseHelper.getData()
+        }
 
     }
 }

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.drop.lefestin.screens
 
 import androidx.compose.foundation.Image
@@ -31,46 +33,82 @@ import com.drop.lefestin.R
 import com.drop.lefestin.ViewModels.LoginViewModel
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.navigation.NavController
+import com.drop.lefestin.ViewModels.SupabaseAuthViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, navController: NavController){
+fun LoginScreen(viewModel: LoginViewModel,
+                navController: NavController,
+                viewModelSupa: SupabaseAuthViewModel
+) {
 
     Box(
         Modifier
             .fillMaxSize()
             .background(Color(0xFFCF0304))
             .padding(16.dp)
-    ){
-        Login(Modifier.align(Alignment.Center), viewModel,  navController)
+    ) {
+        Login(Modifier.align(Alignment.Center), viewModel, navController,viewModelSupa)
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavController) {
+fun Login(modifier: Modifier,
+          viewModel: LoginViewModel,
+          navController: NavController,
+          viewModelSupa: SupabaseAuthViewModel
+) {
+    val email: String by viewModel.email.observeAsState(initial = "")
+    val password: String by viewModel.password.observeAsState(initial = "")
+    val loginEnable: Boolean by viewModel.loginEnable.observeAsState(initial = false)
+    val coroutineScope = rememberCoroutineScope()
 
-    val email :String by viewModel.email.observeAsState(initial = "")
-    val password :String by viewModel.password.observeAsState(initial = "")
-    val loginEnable:Boolean by viewModel.loginEnable.observeAsState(initial = false)
-    Column(modifier = modifier){
+    val context = LocalContext.current
+    val userState by viewModelSupa.userState
+
+    var userEmail by remember { mutableStateOf("") }
+    var userPassword by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModelSupa.isUserLoggedIn(
+            context,
+
+        )
+    }
+
+    Column(modifier = modifier) {
         HeaderImage(Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.padding(16.dp))
         MainTextLogin(Modifier.align(Alignment.Start))
         Spacer(modifier = Modifier.padding(8.dp))
-        EmailField(email) {viewModel.onLoginChanged(it, password)}
+        TextField(value = userEmail, placeholder = { Text(text = "enter email")}, onValueChange = {userEmail = it})
+       //EmailField(email) { viewModel.onLoginChanged(it, password) }
         Spacer(modifier = Modifier.padding(4.dp))
-        PasswordField(password){viewModel.onLoginChanged(email, it)}
+        TextField(value = userPassword, placeholder = { Text(text = "enter password")},keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            singleLine = true,
+            maxLines = 1,
+            visualTransformation = PasswordVisualTransformation(), onValueChange = {userPassword = it})
+       // PasswordField(password) { viewModel.onLoginChanged(email, it) }
         Spacer(modifier = Modifier.padding(8.dp))
         NoAccount(Modifier.align(Alignment.End), navController)
         Spacer(modifier = Modifier.padding(16.dp))
-        LoginButton(loginEnable, onLoginSelected = { /*TODO*/ }, navController = navController)
+        Button(onClick = { viewModelSupa.login(context,userEmail,userPassword);  navController.navigate("home") } ) {
+          Text(text = "Login")
+        }
+        //LoginButton(loginEnable, {  viewModel.onLoginSelected()   }, navController = navController)
     }
 }
 
 @Composable
 fun MainTextLogin(modifier: Modifier) {
-    Text(text = "Iniciar Sesión",
+    Text(
+        text = "Iniciar Sesión",
         modifier = modifier.clickable { },
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
@@ -79,10 +117,14 @@ fun MainTextLogin(modifier: Modifier) {
 }
 
 @Composable
-fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit, navController: NavController) {
+fun LoginButton(
+    loginEnable: Boolean,
+    onLoginSelected: suspend () -> Unit,
+    navController: NavController, ) {
     Button(
-        // onClick = {onLoginSelected() }, logica real
-        onClick = { navController.navigate("home") },
+        // onClick = { }, logica real
+        onClick = { onLoginSelected;
+           navController.navigate("home") },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -92,14 +134,15 @@ fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit, navController
             contentColor = Color(0xFFCF0304),
             disabledContentColor = Color(0xFFCF0304),
         ), enabled = loginEnable
-    ){
+    ) {
         Text(text = "Iniciar Sesión")
     }
 }
 
 @Composable
 fun NoAccount(modifier: Modifier, navController: NavController) {
-    Text(text = "No tienes una cuenta?",
+    Text(
+        text = "No tienes una cuenta?",
         modifier = modifier.clickable { navController.navigate("register") },
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
@@ -109,13 +152,16 @@ fun NoAccount(modifier: Modifier, navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordField(password:String, onTextFieldChanged:(String) ->  Unit) {
-    TextField(value = password, onValueChange = {onTextFieldChanged(it)},
-        placeholder = { Text(text = "Contraseña")},
+fun PasswordField(password: String, onTextFieldChanged: (String) -> Unit) {
+    TextField(
+        value = password,
+        onValueChange = { onTextFieldChanged(it) },
+        placeholder = { Text(text = "Contraseña") },
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
         maxLines = 1,
+        visualTransformation = PasswordVisualTransformation(),
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color(0xFFCF0304),
             focusedIndicatorColor = Color.Transparent,
@@ -129,10 +175,11 @@ fun PasswordField(password:String, onTextFieldChanged:(String) ->  Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailField(email:String, onTextFieldChanged:(String) ->  Unit) {
-    TextField(value = email, onValueChange = {onTextFieldChanged(it)},
+fun EmailField(email: String, onTextFieldChanged: (String) -> Unit) {
+    TextField(
+        value = email, onValueChange = { onTextFieldChanged(it) },
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text(text = "Email") },
+        placeholder = { Text(text = stringResource(R.string.email)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         singleLine = true,
         maxLines = 1,
@@ -148,18 +195,18 @@ fun EmailField(email:String, onTextFieldChanged:(String) ->  Unit) {
 }
 
 @Composable
-fun HeaderImage(modifier:Modifier) {
+fun HeaderImage(modifier: Modifier) {
     Image(
         painter = painterResource(id = R.drawable.logolefestin),
-        contentDescription = "Header",
+        contentDescription = stringResource(R.string.header),
         modifier = modifier
     )
 }
 
 @Preview
 @Composable
-fun DefaultPreviewOfLoginScreen(){
-   // LoginScreen(LoginViewModel(),  navController)
+fun DefaultPreviewOfLoginScreen() {
+    // LoginScreen(LoginViewModel(),  navController)
 
 }
 

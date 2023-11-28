@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.drop.lefestin.ViewModels.LoginViewModel
 import com.drop.lefestin.ViewModels.SignUpViewModel
+import com.drop.lefestin.ViewModels.SupabaseAuthViewModel
 import com.drop.lefestin.screens.AddScreen
 import com.drop.lefestin.screens.FavoriteScreen
 import com.drop.lefestin.screens.HomeScreen
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getData()
+
         setContent {
             LefestinApp {
 
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "login"){
 
                     composable("login"){
-                        LoginScreen(LoginViewModel(),navController)
+                        LoginScreen(LoginViewModel(),navController, SupabaseAuthViewModel())
                     }
 
                     composable("register"){
@@ -72,8 +74,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-    private fun loginUser(email: String, password: String) {
+/*
+    fun loginUser(email: String, password: String) {
         lifecycleScope.launch {
             try {
                 val client = getClient()
@@ -90,7 +92,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun getData() {
+    fun registerUser(regEmail: String, regPassword: String) {
+        lifecycleScope.launch {
+            try {
+                val client = getClient()
+                val response = client.gotrue.signUpWith(Email) {
+                    email = regEmail
+                    password = regPassword
+
+                }
+                Log.e("response sign up user", response.toString())
+            } catch (e: Exception) {
+                Log.e("sign up  Error", e.toString())
+            }
+        }
+    }
+
+    fun getData() {
         lifecycleScope.launch {
 
             val client = getClient()
@@ -102,7 +120,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun getClient(): SupabaseClient {
+    fun getClient(): SupabaseClient {
         return createSupabaseClient(
             supabaseUrl = "https://ndefbaxquzwcbjcepffc.supabase.co",
             supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kZWZiYXhxdXp3Y2JqY2VwZmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY5NzE2NDIsImV4cCI6MjAxMjU0NzY0Mn0.jtPRy4cMMpkbuZpBwiQhlTQpBsVl611Xm72ygtZkyCY"
@@ -111,17 +129,31 @@ class MainActivity : ComponentActivity() {
             install(GoTrue)
         }
     }
+   */
+    val supabaseHelper = SupabaseHelper
+    fun loginUser(email: String, password: String) {
+        lifecycleScope.launch {
+            supabaseHelper.loginUser(email, password)
+        }
+    }
+
+    fun registerUser(email: String, password: String) {
+        lifecycleScope.launch {
+            supabaseHelper.loginUser(email, password)
+        }
+    }
+
+    fun getData() {
+        lifecycleScope.launch {
+            supabaseHelper.getData()
+        }
+    }
+
+
 
 }
 
 
-@Serializable
-data class Repice(
-    @SerialName("id_recipe")
-    val id: Int,
-    @SerialName("name_recipe")
-    val name_recipe: String,
-)
 
 
 @Preview(showBackground = true)
