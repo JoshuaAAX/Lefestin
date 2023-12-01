@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +48,8 @@ import com.drop.lefestin.ViewModels.LoginViewModel
 import com.drop.lefestin.ViewModels.SupabaseAuthViewModel
 import com.drop.lefestin.components.MainAppBar
 import androidx.compose.foundation.lazy.LazyColumn
-
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.res.colorResource
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,18 +77,27 @@ fun ProfileScreen(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(modifier: Modifier,
-          navController: NavController
+            navController: NavController
 ) {
     var userName by remember { mutableStateOf("") }
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
 
-    Column(modifier = modifier) {
-        Image(
-            painter = painterResource(id = R.drawable.pictureprofile),
-            contentDescription = stringResource(R.string.header),
-            modifier = modifier
-        )
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Button(
+            onClick = { /*TODO*/ },
+            modifier = Modifier.weight(1f)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.pictureprofile),
+                contentDescription = stringResource(R.string.header),
+                modifier = modifier
+            )
+        }
         Text(text = stringResource(R.string.user),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
@@ -97,7 +108,6 @@ fun Profile(modifier: Modifier,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFFFFFFFF))
-        Spacer(modifier = Modifier.padding(16.dp))
         LazyColumn {
             item {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -131,12 +141,34 @@ fun Profile(modifier: Modifier,
                         visualTransformation = PasswordVisualTransformation(),
                         onValueChange = { userPassword = it })
                     Spacer(modifier = Modifier.padding(16.dp))
-                    Button(onClick = { /*TODO*/ }) {
-                        Text(text = stringResource(R.string.save_changes))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = colorResource(id = R.color.white),
+                                containerColor = colorResource(id = R.color.white)
+                            )
+                        ) {
+                            Text(text = stringResource(R.string.save_changes), color = Color(0xFFCF0304))
+                        }
+
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = colorResource(id = R.color.white),
+                                containerColor = colorResource(id = R.color.white)
+                            )
+                        ) {
+                            Text(text = stringResource(R.string.log_out), color = Color(0xFFCF0304))
+                        }
                     }
-                    Button(onClick = { /*TODO*/ }) {
-                        Text(text = stringResource(R.string.log_out))
-                    }
+
+                    Spacer(modifier = Modifier.padding(25.dp))
                 }
             }
         }
