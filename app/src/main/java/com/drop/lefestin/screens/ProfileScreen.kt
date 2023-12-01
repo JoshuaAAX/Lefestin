@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -48,8 +50,14 @@ import com.drop.lefestin.ViewModels.LoginViewModel
 import com.drop.lefestin.ViewModels.SupabaseAuthViewModel
 import com.drop.lefestin.components.MainAppBar
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.window.Dialog
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,13 +87,16 @@ fun ProfileScreen(navController: NavController) {
 fun Profile(modifier: Modifier,
             navController: NavController
 ) {
+    var showConfirmationDialog by remember { mutableStateOf(false) }
     var userName by remember { mutableStateOf("") }
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
 
     Column(modifier = Modifier
         .fillMaxSize()
+
         .padding(16.dp),
+
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
@@ -146,7 +157,7 @@ fun Profile(modifier: Modifier,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFFFFFFFF))
-                    Spacer(modifier = Modifier.padding(16.dp))
+                    Spacer(modifier = Modifier.padding(5.dp))
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
                         verticalAlignment = Alignment.CenterVertically,
@@ -162,20 +173,64 @@ fun Profile(modifier: Modifier,
                             Text(text = stringResource(R.string.save_changes), color = Color(0xFFCF0304))
                         }
 
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = colorResource(id = R.color.white),
-                                containerColor = colorResource(id = R.color.white)
-                            )
-                        ) {
-                            Text(text = stringResource(R.string.log_out), color = Color(0xFFCF0304))
-                        }
                     }
 
-                    Spacer(modifier = Modifier.padding(25.dp))
 
+                    Spacer(modifier = Modifier.padding(1.dp))
+                    Button(
+                        onClick = {
+                            showConfirmationDialog = true // Show confirmation dialog on button click
+                        },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Cerrar Sesión",
+                            color = Color.White,
+                            fontSize = 18.sp
+                        )
+                    }
+                    if (showConfirmationDialog) {
+                        Dialog(
+                            onDismissRequest = { showConfirmationDialog = false }
+                        ) {
+                            Surface(
+                                modifier = Modifier.width(IntrinsicSize.Min),
+                                shape = MaterialTheme.shapes.medium
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Text(text = "Confirmación", fontWeight = FontWeight.Bold)
+                                    Text(text = "¿Estás seguro que deseas cerrar sesión?")
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        TextButton(
+                                            onClick = {
+                                                showConfirmationDialog = false
+                                            }
+                                        ) {
+                                            Text("No")
+                                        }
+                                        TextButton(
+                                            onClick = {
+                                                showConfirmationDialog = false
+                                                navController.navigate("login")
+                                            }
+                                        ) {
+                                            Text("Sí")
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
