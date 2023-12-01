@@ -61,7 +61,7 @@ import androidx.compose.ui.window.Dialog
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, viewModel: SupabaseAuthViewModel) {
 
     MainAppBar(navController) {
         Column(
@@ -76,7 +76,7 @@ fun ProfileScreen(navController: NavController) {
                     .padding(16.dp)
             )
             {
-                Profile(Modifier.align(Alignment.Center), navController)
+                Profile(Modifier.align(Alignment.Center), navController, viewModel)
             }
         }
     }
@@ -85,12 +85,23 @@ fun ProfileScreen(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(modifier: Modifier,
-            navController: NavController
+            navController: NavController,
+            viewModel: SupabaseAuthViewModel
 ) {
+
+    val context = LocalContext.current
     var showConfirmationDialog by remember { mutableStateOf(false) }
     var userName by remember { mutableStateOf("") }
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModel.isUserLoggedIn(
+            context,
+
+            )
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -220,7 +231,10 @@ fun Profile(modifier: Modifier,
                                         TextButton(
                                             onClick = {
                                                 showConfirmationDialog = false
-                                                navController.navigate("login")
+
+                                                viewModel.logout(context)
+
+                                                navController.navigate("auth")
                                             }
                                         ) {
                                             Text("Sí")

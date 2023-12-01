@@ -6,8 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drop.lefestin.SupabaseHelper
-import com.drop.lefestin.SupabaseHelper.getData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -33,11 +31,5 @@ class LoginViewModel : ViewModel(){
 
     private fun isValidEmail(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     private fun isValidPassword(password: String): Boolean = password.length > 6
-    suspend fun onLoginSelected(){
-        viewModelScope.launch {
-            SupabaseHelper.loginUser(_email.value.toString(),_password.value.toString())
-            SupabaseHelper.getData()
-        }
 
-    }
 }
