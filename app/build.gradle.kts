@@ -78,6 +78,7 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:postgrest-kt:1.4.0")
     implementation("io.ktor:ktor-client-cio:2.3.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("androidx.compose.ui:ui-android:1.5.4")
 
     //hilt inyection
 
