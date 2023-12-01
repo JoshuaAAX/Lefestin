@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("register"){
-                        SignUpScreen(SignUpViewModel(),navController)
+                        SignUpScreen(SignUpViewModel(),navController, SupabaseAuthViewModel())
                     }
 
                     composable("home"){

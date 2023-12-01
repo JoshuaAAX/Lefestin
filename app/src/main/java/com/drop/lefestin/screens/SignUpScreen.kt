@@ -18,11 +18,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,9 +37,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.drop.lefestin.R
 import com.drop.lefestin.ViewModels.SignUpViewModel
+import com.drop.lefestin.ViewModels.SupabaseAuthViewModel
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel,navController: NavController){
+fun SignUpScreen(viewModel: SignUpViewModel,navController: NavController, viewModelSupa: SupabaseAuthViewModel){
 
     Box(
         Modifier
@@ -42,17 +48,28 @@ fun SignUpScreen(viewModel: SignUpViewModel,navController: NavController){
             .background(Color(0xFFCF0304))
             .padding(16.dp)
     ){
-        Login(Modifier.align(Alignment.Center), viewModel,navController)
+        Login(Modifier.align(Alignment.Center), viewModel,navController, viewModelSupa)
     }
 }
 
 @Composable
-fun Login(modifier: Modifier, viewModel: SignUpViewModel,navController: NavController) {
+fun Login(modifier: Modifier, viewModel: SignUpViewModel,navController: NavController, viewModelSupa: SupabaseAuthViewModel) {
 
+    val context = LocalContext.current
+    var currentUserState by remember { mutableStateOf("") }
     val user :String by viewModel.user.observeAsState(initial = "")
     val email :String by viewModel.email.observeAsState(initial = "")
     val password :String by viewModel.password.observeAsState(initial = "")
     val signUpEnable:Boolean by viewModel.signUpEnable.observeAsState(initial = false)
+
+
+    LaunchedEffect(Unit) {
+        viewModelSupa.isUserLoggedIn(
+            context,
+
+            )
+    }
+
     Column(modifier = modifier){
 
         HeaderImageSignUp(Modifier.align(Alignment.CenterHorizontally))
@@ -67,7 +84,19 @@ fun Login(modifier: Modifier, viewModel: SignUpViewModel,navController: NavContr
         Spacer(modifier = Modifier.padding(8.dp))
         HaveAnAccount(Modifier.align(Alignment.End), navController)
         Spacer(modifier = Modifier.padding(16.dp))
-        SignUpButton(signUpEnable) {viewModel.onSignUpSelected()}
+
+        Button(
+            onClick = {
+                viewModelSupa.signUp(context, email, password)
+
+
+            }) {
+            Text(text = "Registrarse")
+        }
+
+        if (currentUserState.isNotEmpty()) {
+            Text(text = currentUserState)
+        }
     }
 }
 
@@ -122,7 +151,7 @@ fun SignUpButton(signUpEnable: Boolean, onSignUpSelected: () -> Unit) {
 @Composable
 fun HaveAnAccount(modifier: Modifier,navController: NavController) {
     Text(text = "Ya tienes una cuenta?",
-        modifier = modifier.clickable { navController.navigate("login")},
+        modifier = modifier.clickable { navController.navigate("auth")},
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         color = Color(0xFFFFFFFF)

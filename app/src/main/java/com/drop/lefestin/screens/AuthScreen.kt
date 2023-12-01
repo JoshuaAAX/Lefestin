@@ -125,7 +125,7 @@ fun AuthScreen(
                     val message = (userState as UserState.Success).message
                     currentUserState = message
 
-                    if (message == "User already logged in!" || message == "Logged in successfully!") {
+                    if (message == "User already logged in!" || message == "Logged in succesfully!") {
                         navController.navigate("home")
                     }
                 }
