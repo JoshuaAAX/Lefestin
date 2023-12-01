@@ -141,6 +141,12 @@ fun Profile(modifier: Modifier,
                         visualTransformation = PasswordVisualTransformation(),
                         onValueChange = { userPassword = it })
                     Spacer(modifier = Modifier.padding(16.dp))
+                    Text(text = "Términos, Condiciones y Tratamiento de datos",
+                        modifier = modifier.clickable { navController.navigate("terms") },
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFFFFFFF))
+                    Spacer(modifier = Modifier.padding(16.dp))
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
                         verticalAlignment = Alignment.CenterVertically,
@@ -169,6 +175,7 @@ fun Profile(modifier: Modifier,
                     }
 
                     Spacer(modifier = Modifier.padding(25.dp))
+
                 }
             }
         }

@@ -15,11 +15,14 @@ import com.drop.lefestin.ViewModels.LoginViewModel
 import com.drop.lefestin.ViewModels.SignUpViewModel
 import com.drop.lefestin.ViewModels.SupabaseAuthViewModel
 import com.drop.lefestin.screens.AddScreen
+import com.drop.lefestin.screens.DataAuthScreen
 import com.drop.lefestin.screens.FavoriteScreen
 import com.drop.lefestin.screens.HomeScreen
 import com.drop.lefestin.screens.LoginScreen
+import com.drop.lefestin.screens.PrivacyPoliticsScreen
 import com.drop.lefestin.screens.ProfileScreen
 import com.drop.lefestin.screens.SignUpScreen
+import com.drop.lefestin.screens.TermsandConditionsScreen
 import com.drop.lefestin.ui.theme.LefestinTheme
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -67,6 +70,15 @@ class MainActivity : ComponentActivity() {
 
                     composable("profile"){
                         ProfileScreen(navController)
+                    }
+                    composable("terms"){
+                        TermsandConditionsScreen(navController)
+                    }
+                    composable("privacy"){
+                        PrivacyPoliticsScreen(navController)
+                    }
+                    composable("dataauth"){
+                        DataAuthScreen(navController)
                     }
                 }
 
