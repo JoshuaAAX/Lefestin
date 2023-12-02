@@ -56,12 +56,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.window.Dialog
+import com.drop.lefestin.ViewModels.MainViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ProfileScreen(navController: NavController, viewModel: SupabaseAuthViewModel) {
+fun ProfileScreen(navController: NavController, viewModel: SupabaseAuthViewModel, viewModelMain: MainViewModel) {
 
     MainAppBar(navController) {
         Column(
@@ -76,7 +79,10 @@ fun ProfileScreen(navController: NavController, viewModel: SupabaseAuthViewModel
                     .padding(16.dp)
             )
             {
-                Profile(Modifier.align(Alignment.Center), navController, viewModel)
+                Profile(Modifier.align(Alignment.Center),
+                    navController,
+                    viewModel,
+                    viewModelMain)
             }
         }
     }
@@ -86,7 +92,10 @@ fun ProfileScreen(navController: NavController, viewModel: SupabaseAuthViewModel
 @Composable
 fun Profile(modifier: Modifier,
             navController: NavController,
-            viewModel: SupabaseAuthViewModel
+            viewModel: SupabaseAuthViewModel,
+            viewModelMain: MainViewModel
+
+
 ) {
 
     val context = LocalContext.current
@@ -94,6 +103,7 @@ fun Profile(modifier: Modifier,
     var userName by remember { mutableStateOf("") }
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
+
 
     LaunchedEffect(Unit) {
         viewModel.isUserLoggedIn(
@@ -111,14 +121,23 @@ fun Profile(modifier: Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { navController.navigate("camara") },
             modifier = Modifier.weight(1f)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.pictureprofile),
-                contentDescription = stringResource(R.string.header),
-                modifier = modifier
-            )
+            val lastPhoto = viewModelMain.getLastPhoto()
+            if (lastPhoto != null) {
+                Image(
+                    bitmap = lastPhoto.asImageBitmap(),
+                    contentDescription = stringResource(R.string.header),
+                    modifier = modifier
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.pictureprofile),
+                    contentDescription = stringResource(R.string.header),
+                    modifier = modifier
+                )
+            }
         }
         Text(text = stringResource(R.string.user),
             fontSize = 16.sp,

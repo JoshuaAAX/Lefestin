@@ -116,6 +116,9 @@ fun AuthScreen(
             }
 
 
+
+
+
             when (userState) {
                 is UserState.Loading -> {
                     LoadingComponent()
@@ -125,7 +128,7 @@ fun AuthScreen(
                     val message = (userState as UserState.Success).message
                     currentUserState = message
 
-                    if (message == "User already logged in!" || message == "Logged in succesfully!") {
+                    if (message == "User already logged in!" || message == "Logged in successfully!") {
                         navController.navigate("home")
                     }
                 }
@@ -133,7 +136,6 @@ fun AuthScreen(
                 is UserState.Error -> {
                     val message = (userState as UserState.Error).message
                     currentUserState = "Ingrese su email o contraseña de nuevo"
-                    navController.navigate("home")
                 }
             }
 

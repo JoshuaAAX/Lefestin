@@ -11,6 +11,7 @@ import com.drop.lefestin.utils.SharedPreferenceHelper
 import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.gotrue.providers.builtin.Email
+import io.github.jan.supabase.gotrue.sendOtpTo
 import kotlinx.coroutines.launch
 
 class SupabaseAuthViewModel : ViewModel() {
@@ -72,6 +73,24 @@ class SupabaseAuthViewModel : ViewModel() {
         }
     }
 
+
+    fun deleteAccount(context: Context) {
+        val sharedPref = SharedPreferenceHelper(context)
+        viewModelScope.launch {
+            try {
+                _userState.value = UserState.Loading
+
+                val user = client.gotrue.retrieveUserForCurrentSession(updateSession = true)
+                client.gotrue.admin.deleteUser(uid = user.id)
+                client.gotrue.admin.deleteUser(uid = user.aud)
+                _userState.value = UserState.Success("Logged out successfully!")
+            } catch (e: Exception) {
+                _userState.value = UserState.Error(e.message ?: "")
+            }
+        }
+    }
+
+
     fun logout(context: Context) {
         val sharedPref = SharedPreferenceHelper(context)
         viewModelScope.launch {
@@ -85,6 +104,7 @@ class SupabaseAuthViewModel : ViewModel() {
             }
         }
     }
+
 
 
     fun isUserLoggedIn(
