@@ -94,16 +94,12 @@ fun Profile(modifier: Modifier,
             navController: NavController,
             viewModel: SupabaseAuthViewModel,
             viewModelMain: MainViewModel
-
-
 ) {
-
     val context = LocalContext.current
     var showConfirmationDialog by remember { mutableStateOf(false) }
     var userName by remember { mutableStateOf("") }
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
-
 
     LaunchedEffect(Unit) {
         viewModel.isUserLoggedIn(
@@ -112,12 +108,9 @@ fun Profile(modifier: Modifier,
             )
     }
 
-
     Column(modifier = Modifier
         .fillMaxSize()
-
         .padding(16.dp),
-
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
@@ -149,7 +142,7 @@ fun Profile(modifier: Modifier,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFFFFFFFF))
-        LazyColumn {
+        LazyColumn{
             item {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(text = stringResource(R.string.user_name),
@@ -194,7 +187,9 @@ fun Profile(modifier: Modifier,
                     ) {
                         Button(
                             onClick = { /*TODO*/ },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f)
+                                .padding(8.dp)
+                                .fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = colorResource(id = R.color.white),
                                 containerColor = colorResource(id = R.color.white)
@@ -213,11 +208,16 @@ fun Profile(modifier: Modifier,
                         },
                         modifier = Modifier
                             .padding(8.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = colorResource(id = R.color.white),
+                            containerColor = colorResource(id = R.color.white)
+                        )
+
                     ) {
                         Text(
                             text = "Cerrar Sesión",
-                            color = Color.White,
+                            color = Color(0xFFCF0304),
                             fontSize = 18.sp
                         )
                     }
